@@ -1,0 +1,77 @@
+
+    private void addToLayout(Context context, Node node, ViewGroup into){
+
+        if(!(node instanceof Element)){
+            if(!node.toString().trim().equals(""))
+                into.addView(LayoutBuilder.getBasicTextView(context, node.toString()));
+            return;
+        }
+        Element e = (Element) node;
+
+        if(e.tagName().equals("h2")){
+            into.addView(LayoutBuilder.getHeader2(context, e.wholeText()));
+        }else if(e.tagName().equals("h3")){
+            into.addView(LayoutBuilder.getHeader3(context, e.wholeText()));
+        }else if(isRekurziveText(e)){
+            into.addView(LayoutBuilder.getStyledTextView(context, e));
+        }else if(e.tagName().equals("img")){
+            ImageView imageView = LayoutBuilder.getImageView(context);
+            String source = e.attr("src");
+            PageImage image = new PageImage(imageView, source);
+            pageImages.add(image);
+            into.addView(imageView);
+        }else if(e.tagName().equals("div")){
+            if(e.classNames().contains("tabber")){
+//                LinearLayout tabberLayout = LayoutBuilder.getLinearLayout(context);
+//                tabbers.addTabber(tabberLayout);
+//                into.appendChild(parent);
+                for(Node child : e.childNodes())
+                    addToLayout(context, child, into);
+            }else if(e.classNames().contains("tabbertab")){
+//                Element parent = new Element("div").addClass("tabbertab").attr("title", e.attr("title"));
+//                into.appendChild(parent);
+                for(Node child : e.childNodes())
+                    addToLayout(context, child, into);
+            }
+//        }else if(isTextElement(e)) {
+//            Element text;
+//            if (e.tagName().equals("a")) {
+//                if (isLinkToAvailablePage(e.attr("href"))) {
+//                    text = new Element("a").attr("href", e.attr("href"));
+//                } else {
+//                    text = new Element("p");
+//                }
+//            }else if(e.tagName().equals("font")) {
+//                text = new Element("font");
+//                if(!e.attr("color").equals("")) {
+//                    text.attr("color", e.attr("color"));
+//                }
+//            }else{
+//                text = new Element(e.tagName());
+//            }
+////            if(e.children().size() == 0){
+////                text.text(e.text());
+////                into.appendChild(text);
+////            }else{
+//            for(Node child : e.childNodes())
+//                addToLayout(child, text);
+//            into.appendChild(text);
+////            }
+//            //tabulka
+//            // ostatní elementy
+//        }else if(isConsiderable(e)){
+//            Element parent = new Element(e.tagName());
+//            if(isTableElement(e)){
+//                String[] checkAttributes = new String[]{"rowspan"};
+//                for(int i = 0; i < checkAttributes.length; i++)
+//                    if(!e.attr(checkAttributes[i]).equals(""))
+//                        e.attr(checkAttributes[i],e.attr(checkAttributes[i]));
+//            }
+//            into.appendChild(parent);
+//            for(Node child : e.childNodes())
+//                addToLayout(child, parent);
+        }else{
+            for(Node child : e.childNodes())
+                addToLayout(context, child, into);
+        }
+    }
